@@ -13,7 +13,10 @@ export interface MsgRequestTransaction {
   fee: string;
 }
 
-export interface MsgRequestTransactionResponse {}
+export interface MsgRequestTransactionResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgObservationVote {
   creator: string;
@@ -24,7 +27,10 @@ export interface MsgObservationVote {
   amount: string;
 }
 
-export interface MsgObservationVoteResponse {}
+export interface MsgObservationVoteResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgUpdateBalance {
   creator: string;
@@ -33,7 +39,10 @@ export interface MsgUpdateBalance {
   decimal: string;
 }
 
-export interface MsgUpdateBalanceResponse {}
+export interface MsgUpdateBalanceResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgApproveTransaction {
   creator: string;
@@ -42,7 +51,10 @@ export interface MsgApproveTransaction {
   signedKey: string;
 }
 
-export interface MsgApproveTransactionResponse {}
+export interface MsgApproveTransactionResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgTransferPoolcoin {
   creator: string;
@@ -51,20 +63,29 @@ export interface MsgTransferPoolcoin {
   amt: string;
 }
 
-export interface MsgTransferPoolcoinResponse {}
+export interface MsgTransferPoolcoinResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgAddWhitelisted {
   creator: string;
   address: string;
 }
 
-export interface MsgAddWhitelistedResponse {}
+export interface MsgAddWhitelistedResponse {
+  code: string;
+  msg: string;
+}
 
 export interface MsgSetAdmin {
   creator: string;
 }
 
-export interface MsgSetAdminResponse {}
+export interface MsgSetAdminResponse {
+  code: string;
+  msg: string;
+}
 
 const baseMsgRequestTransaction: object = {
   creator: "",
@@ -240,13 +261,19 @@ export const MsgRequestTransaction = {
   },
 };
 
-const baseMsgRequestTransactionResponse: object = {};
+const baseMsgRequestTransactionResponse: object = { code: "", msg: "" };
 
 export const MsgRequestTransactionResponse = {
   encode(
-    _: MsgRequestTransactionResponse,
+    message: MsgRequestTransactionResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -262,6 +289,12 @@ export const MsgRequestTransactionResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -270,24 +303,46 @@ export const MsgRequestTransactionResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgRequestTransactionResponse {
+  fromJSON(object: any): MsgRequestTransactionResponse {
     const message = {
       ...baseMsgRequestTransactionResponse,
     } as MsgRequestTransactionResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgRequestTransactionResponse): unknown {
+  toJSON(message: MsgRequestTransactionResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgRequestTransactionResponse>
+    object: DeepPartial<MsgRequestTransactionResponse>
   ): MsgRequestTransactionResponse {
     const message = {
       ...baseMsgRequestTransactionResponse,
     } as MsgRequestTransactionResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -442,13 +497,19 @@ export const MsgObservationVote = {
   },
 };
 
-const baseMsgObservationVoteResponse: object = {};
+const baseMsgObservationVoteResponse: object = { code: "", msg: "" };
 
 export const MsgObservationVoteResponse = {
   encode(
-    _: MsgObservationVoteResponse,
+    message: MsgObservationVoteResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -464,6 +525,12 @@ export const MsgObservationVoteResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -472,24 +539,46 @@ export const MsgObservationVoteResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgObservationVoteResponse {
+  fromJSON(object: any): MsgObservationVoteResponse {
     const message = {
       ...baseMsgObservationVoteResponse,
     } as MsgObservationVoteResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgObservationVoteResponse): unknown {
+  toJSON(message: MsgObservationVoteResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgObservationVoteResponse>
+    object: DeepPartial<MsgObservationVoteResponse>
   ): MsgObservationVoteResponse {
     const message = {
       ...baseMsgObservationVoteResponse,
     } as MsgObservationVoteResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -605,13 +694,19 @@ export const MsgUpdateBalance = {
   },
 };
 
-const baseMsgUpdateBalanceResponse: object = {};
+const baseMsgUpdateBalanceResponse: object = { code: "", msg: "" };
 
 export const MsgUpdateBalanceResponse = {
   encode(
-    _: MsgUpdateBalanceResponse,
+    message: MsgUpdateBalanceResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -627,6 +722,12 @@ export const MsgUpdateBalanceResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -635,24 +736,46 @@ export const MsgUpdateBalanceResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgUpdateBalanceResponse {
+  fromJSON(object: any): MsgUpdateBalanceResponse {
     const message = {
       ...baseMsgUpdateBalanceResponse,
     } as MsgUpdateBalanceResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgUpdateBalanceResponse): unknown {
+  toJSON(message: MsgUpdateBalanceResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgUpdateBalanceResponse>
+    object: DeepPartial<MsgUpdateBalanceResponse>
   ): MsgUpdateBalanceResponse {
     const message = {
       ...baseMsgUpdateBalanceResponse,
     } as MsgUpdateBalanceResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -773,13 +896,19 @@ export const MsgApproveTransaction = {
   },
 };
 
-const baseMsgApproveTransactionResponse: object = {};
+const baseMsgApproveTransactionResponse: object = { code: "", msg: "" };
 
 export const MsgApproveTransactionResponse = {
   encode(
-    _: MsgApproveTransactionResponse,
+    message: MsgApproveTransactionResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -795,6 +924,12 @@ export const MsgApproveTransactionResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -803,24 +938,46 @@ export const MsgApproveTransactionResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgApproveTransactionResponse {
+  fromJSON(object: any): MsgApproveTransactionResponse {
     const message = {
       ...baseMsgApproveTransactionResponse,
     } as MsgApproveTransactionResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgApproveTransactionResponse): unknown {
+  toJSON(message: MsgApproveTransactionResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgApproveTransactionResponse>
+    object: DeepPartial<MsgApproveTransactionResponse>
   ): MsgApproveTransactionResponse {
     const message = {
       ...baseMsgApproveTransactionResponse,
     } as MsgApproveTransactionResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -939,13 +1096,19 @@ export const MsgTransferPoolcoin = {
   },
 };
 
-const baseMsgTransferPoolcoinResponse: object = {};
+const baseMsgTransferPoolcoinResponse: object = { code: "", msg: "" };
 
 export const MsgTransferPoolcoinResponse = {
   encode(
-    _: MsgTransferPoolcoinResponse,
+    message: MsgTransferPoolcoinResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -961,6 +1124,12 @@ export const MsgTransferPoolcoinResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -969,24 +1138,46 @@ export const MsgTransferPoolcoinResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgTransferPoolcoinResponse {
+  fromJSON(object: any): MsgTransferPoolcoinResponse {
     const message = {
       ...baseMsgTransferPoolcoinResponse,
     } as MsgTransferPoolcoinResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgTransferPoolcoinResponse): unknown {
+  toJSON(message: MsgTransferPoolcoinResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgTransferPoolcoinResponse>
+    object: DeepPartial<MsgTransferPoolcoinResponse>
   ): MsgTransferPoolcoinResponse {
     const message = {
       ...baseMsgTransferPoolcoinResponse,
     } as MsgTransferPoolcoinResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -1063,13 +1254,19 @@ export const MsgAddWhitelisted = {
   },
 };
 
-const baseMsgAddWhitelistedResponse: object = {};
+const baseMsgAddWhitelistedResponse: object = { code: "", msg: "" };
 
 export const MsgAddWhitelistedResponse = {
   encode(
-    _: MsgAddWhitelistedResponse,
+    message: MsgAddWhitelistedResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -1085,6 +1282,12 @@ export const MsgAddWhitelistedResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1093,24 +1296,46 @@ export const MsgAddWhitelistedResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgAddWhitelistedResponse {
+  fromJSON(object: any): MsgAddWhitelistedResponse {
     const message = {
       ...baseMsgAddWhitelistedResponse,
     } as MsgAddWhitelistedResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgAddWhitelistedResponse): unknown {
+  toJSON(message: MsgAddWhitelistedResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgAddWhitelistedResponse>
+    object: DeepPartial<MsgAddWhitelistedResponse>
   ): MsgAddWhitelistedResponse {
     const message = {
       ...baseMsgAddWhitelistedResponse,
     } as MsgAddWhitelistedResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
@@ -1170,10 +1395,19 @@ export const MsgSetAdmin = {
   },
 };
 
-const baseMsgSetAdminResponse: object = {};
+const baseMsgSetAdminResponse: object = { code: "", msg: "" };
 
 export const MsgSetAdminResponse = {
-  encode(_: MsgSetAdminResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: MsgSetAdminResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -1184,6 +1418,12 @@ export const MsgSetAdminResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1192,18 +1432,40 @@ export const MsgSetAdminResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgSetAdminResponse {
+  fromJSON(object: any): MsgSetAdminResponse {
     const message = { ...baseMsgSetAdminResponse } as MsgSetAdminResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgSetAdminResponse): unknown {
+  toJSON(message: MsgSetAdminResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgSetAdminResponse>): MsgSetAdminResponse {
+  fromPartial(object: DeepPartial<MsgSetAdminResponse>): MsgSetAdminResponse {
     const message = { ...baseMsgSetAdminResponse } as MsgSetAdminResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };

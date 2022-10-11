@@ -7,7 +7,7 @@ option go_package = "github.com/humansdotai/humans/x/humans/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc RequestTransaction(MsgRequestTransaction) returns (MsgRequestTransactionResponse);
+  rpc RequestTransaction(MsgRequestTransaction) returns (MsgRequestTransactionResponse);
   rpc ObservationVote(MsgObservationVote) returns (MsgObservationVoteResponse);
   rpc UpdateBalance(MsgUpdateBalance) returns (MsgUpdateBalanceResponse);
   rpc ApproveTransaction(MsgApproveTransaction) returns (MsgApproveTransactionResponse);
@@ -28,6 +28,8 @@ message MsgRequestTransaction {
 }
 
 message MsgRequestTransactionResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgObservationVote {
@@ -40,6 +42,8 @@ message MsgObservationVote {
 }
 
 message MsgObservationVoteResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgUpdateBalance {
@@ -50,6 +54,8 @@ message MsgUpdateBalance {
 }
 
 message MsgUpdateBalanceResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgApproveTransaction {
@@ -60,6 +66,8 @@ message MsgApproveTransaction {
 }
 
 message MsgApproveTransactionResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgTransferPoolcoin {
@@ -70,6 +78,8 @@ message MsgTransferPoolcoin {
 }
 
 message MsgTransferPoolcoinResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgAddWhitelisted {
@@ -78,6 +88,8 @@ message MsgAddWhitelisted {
 }
 
 message MsgAddWhitelistedResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 message MsgSetAdmin {
@@ -85,6 +97,8 @@ message MsgSetAdmin {
 }
 
 message MsgSetAdminResponse {
+  string code = 1;
+  string msg = 2;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

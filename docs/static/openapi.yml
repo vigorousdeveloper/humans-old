@@ -48463,18 +48463,53 @@ definitions:
         type: string
   humansdotai.humans.humans.MsgAddWhitelistedResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgApproveTransactionResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgObservationVoteResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgRequestTransactionResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgSetAdminResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgTransferPoolcoinResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.MsgUpdateBalanceResponse:
     type: object
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
   humansdotai.humans.humans.ObserveVote:
     type: object
     properties:
