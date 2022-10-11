@@ -88,6 +88,7 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -113,8 +114,6 @@ const (
 	AccountAddressPrefix = "human"
 	Name                 = "humans"
 )
-
-// this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 var (

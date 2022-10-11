@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/humansdotai/humans/app"
-	"github.com/ignite-hq/cli/ignite/pkg/cosmoscmd"
+	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 	"github.com/spf13/cobra"
 
 	"github.com/CosmWasm/wasmd/x/wasm"

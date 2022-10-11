@@ -93,7 +93,10 @@ export interface MsgKeysignVote {
   pubKey: string;
 }
 
-export interface MsgKeysignVoteResponse {}
+export interface MsgKeysignVoteResponse {
+  code: string;
+  msg: string;
+}
 
 const baseMsgRequestTransaction: object = {
   creator: "",
@@ -1567,10 +1570,19 @@ export const MsgKeysignVote = {
   },
 };
 
-const baseMsgKeysignVoteResponse: object = {};
+const baseMsgKeysignVoteResponse: object = { code: "", msg: "" };
 
 export const MsgKeysignVoteResponse = {
-  encode(_: MsgKeysignVoteResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: MsgKeysignVoteResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.msg !== "") {
+      writer.uint32(18).string(message.msg);
+    }
     return writer;
   },
 
@@ -1581,6 +1593,12 @@ export const MsgKeysignVoteResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.code = reader.string();
+          break;
+        case 2:
+          message.msg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1589,18 +1607,42 @@ export const MsgKeysignVoteResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgKeysignVoteResponse {
+  fromJSON(object: any): MsgKeysignVoteResponse {
     const message = { ...baseMsgKeysignVoteResponse } as MsgKeysignVoteResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = String(object.code);
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = String(object.msg);
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 
-  toJSON(_: MsgKeysignVoteResponse): unknown {
+  toJSON(message: MsgKeysignVoteResponse): unknown {
     const obj: any = {};
+    message.code !== undefined && (obj.code = message.code);
+    message.msg !== undefined && (obj.msg = message.msg);
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgKeysignVoteResponse>): MsgKeysignVoteResponse {
+  fromPartial(
+    object: DeepPartial<MsgKeysignVoteResponse>
+  ): MsgKeysignVoteResponse {
     const message = { ...baseMsgKeysignVoteResponse } as MsgKeysignVoteResponse;
+    if (object.code !== undefined && object.code !== null) {
+      message.code = object.code;
+    } else {
+      message.code = "";
+    }
+    if (object.msg !== undefined && object.msg !== null) {
+      message.msg = object.msg;
+    } else {
+      message.msg = "";
+    }
     return message;
   },
 };
