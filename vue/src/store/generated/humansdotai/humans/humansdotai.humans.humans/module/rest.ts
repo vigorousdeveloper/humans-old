@@ -137,6 +137,21 @@ export interface HumansQueryAllSuperadminResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface HumansQueryAllTransactionDataResponse {
+  transactionData?: HumansTransactionData[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface HumansQueryGetFeeBalanceResponse {
   feeBalance?: HumansFeeBalance;
 }
@@ -157,6 +172,10 @@ export interface HumansQueryGetSuperadminResponse {
   superadmin?: HumansSuperadmin;
 }
 
+export interface HumansQueryGetTransactionDataResponse {
+  transactionData?: HumansTransactionData;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -168,6 +187,21 @@ export interface HumansQueryParamsResponse {
 export interface HumansSuperadmin {
   index?: string;
   address?: string;
+}
+
+export interface HumansTransactionData {
+  index?: string;
+  originChain?: string;
+  originAddress?: string;
+  targetChain?: string;
+  targetAddress?: string;
+  amount?: string;
+  time?: string;
+  creator?: string;
+  status?: string;
+  confirmedBlockHash?: string;
+  signedKey?: string;
+  fee?: string;
 }
 
 export interface ProtobufAny {
@@ -649,6 +683,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   querySuperadmin = (index: string, params: RequestParams = {}) =>
     this.request<HumansQueryGetSuperadminResponse, RpcStatus>({
       path: `/humansdotai/humans/humans/superadmin/${index}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTransactionDataAll
+   * @summary Queries a list of TransactionData items.
+   * @request GET:/humansdotai/humans/humans/transaction_data
+   */
+  queryTransactionDataAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<HumansQueryAllTransactionDataResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/transaction_data`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTransactionData
+   * @summary Queries a TransactionData by index.
+   * @request GET:/humansdotai/humans/humans/transaction_data/{index}
+   */
+  queryTransactionData = (index: string, params: RequestParams = {}) =>
+    this.request<HumansQueryGetTransactionDataResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/transaction_data/${index}`,
       method: "GET",
       format: "json",
       ...params,
