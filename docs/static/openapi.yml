@@ -47178,6 +47178,8 @@ definitions:
     description: >-
       MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
       response type.
+  humansdotai.humans.humans.MsgApproveTransactionResponse:
+    type: object
   humansdotai.humans.humans.MsgObservationVoteResponse:
     type: object
   humansdotai.humans.humans.MsgRequestTransactionResponse:
