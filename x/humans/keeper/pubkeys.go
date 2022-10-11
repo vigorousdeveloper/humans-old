@@ -1,9 +1,9 @@
 package keeper
 
 import (
+	"github.com/humansdotai/humans/x/humans/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/humansdotai/humans/x/humans/types"
 )
 
 // SetPubkeys set a specific pubkeys in the store from its index
