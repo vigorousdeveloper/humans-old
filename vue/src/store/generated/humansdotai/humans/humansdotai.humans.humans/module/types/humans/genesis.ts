@@ -4,6 +4,7 @@ import { FeeBalance } from "../humans/fee_balance";
 import { KeysignVoteData } from "../humans/keysign_vote_data";
 import { ObserveVote } from "../humans/observe_vote";
 import { PoolBalance } from "../humans/pool_balance";
+import { Superadmin } from "../humans/superadmin";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "humansdotai.humans.humans";
@@ -14,8 +15,9 @@ export interface GenesisState {
   feeBalanceList: FeeBalance[];
   keysignVoteDataList: KeysignVoteData[];
   observeVoteList: ObserveVote[];
-  /** this line is used by starport scaffolding # genesis/proto/state */
   poolBalanceList: PoolBalance[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  superadminList: Superadmin[];
 }
 
 const baseGenesisState: object = {};
@@ -37,6 +39,9 @@ export const GenesisState = {
     for (const v of message.poolBalanceList) {
       PoolBalance.encode(v!, writer.uint32(42).fork()).ldelim();
     }
+    for (const v of message.superadminList) {
+      Superadmin.encode(v!, writer.uint32(50).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -48,6 +53,7 @@ export const GenesisState = {
     message.keysignVoteDataList = [];
     message.observeVoteList = [];
     message.poolBalanceList = [];
+    message.superadminList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -74,6 +80,11 @@ export const GenesisState = {
             PoolBalance.decode(reader, reader.uint32())
           );
           break;
+        case 6:
+          message.superadminList.push(
+            Superadmin.decode(reader, reader.uint32())
+          );
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -88,6 +99,7 @@ export const GenesisState = {
     message.keysignVoteDataList = [];
     message.observeVoteList = [];
     message.poolBalanceList = [];
+    message.superadminList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromJSON(object.params);
     } else {
@@ -120,6 +132,11 @@ export const GenesisState = {
     ) {
       for (const e of object.poolBalanceList) {
         message.poolBalanceList.push(PoolBalance.fromJSON(e));
+      }
+    }
+    if (object.superadminList !== undefined && object.superadminList !== null) {
+      for (const e of object.superadminList) {
+        message.superadminList.push(Superadmin.fromJSON(e));
       }
     }
     return message;
@@ -157,6 +174,13 @@ export const GenesisState = {
     } else {
       obj.poolBalanceList = [];
     }
+    if (message.superadminList) {
+      obj.superadminList = message.superadminList.map((e) =>
+        e ? Superadmin.toJSON(e) : undefined
+      );
+    } else {
+      obj.superadminList = [];
+    }
     return obj;
   },
 
@@ -166,6 +190,7 @@ export const GenesisState = {
     message.keysignVoteDataList = [];
     message.observeVoteList = [];
     message.poolBalanceList = [];
+    message.superadminList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     } else {
@@ -198,6 +223,11 @@ export const GenesisState = {
     ) {
       for (const e of object.poolBalanceList) {
         message.poolBalanceList.push(PoolBalance.fromPartial(e));
+      }
+    }
+    if (object.superadminList !== undefined && object.superadminList !== null) {
+      for (const e of object.superadminList) {
+        message.superadminList.push(Superadmin.fromPartial(e));
       }
     }
     return message;

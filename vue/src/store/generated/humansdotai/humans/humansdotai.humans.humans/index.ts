@@ -5,9 +5,10 @@ import { KeysignVoteData } from "./module/types/humans/keysign_vote_data"
 import { ObserveVote } from "./module/types/humans/observe_vote"
 import { Params } from "./module/types/humans/params"
 import { PoolBalance } from "./module/types/humans/pool_balance"
+import { Superadmin } from "./module/types/humans/superadmin"
 
 
-export { FeeBalance, KeysignVoteData, ObserveVote, Params, PoolBalance };
+export { FeeBalance, KeysignVoteData, ObserveVote, Params, PoolBalance, Superadmin };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -54,6 +55,8 @@ const getDefaultState = () => {
 				ObserveVoteAll: {},
 				PoolBalance: {},
 				PoolBalanceAll: {},
+				Superadmin: {},
+				SuperadminAll: {},
 				
 				_Structure: {
 						FeeBalance: getStructure(FeeBalance.fromPartial({})),
@@ -61,6 +64,7 @@ const getDefaultState = () => {
 						ObserveVote: getStructure(ObserveVote.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						PoolBalance: getStructure(PoolBalance.fromPartial({})),
+						Superadmin: getStructure(Superadmin.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -142,6 +146,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.PoolBalanceAll[JSON.stringify(params)] ?? {}
+		},
+				getSuperadmin: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Superadmin[JSON.stringify(params)] ?? {}
+		},
+				getSuperadminAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.SuperadminAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -391,6 +407,54 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QuerySuperadmin({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.querySuperadmin( key.index)).data
+				
+					
+				commit('QUERY', { query: 'Superadmin', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QuerySuperadmin', payload: { options: { all }, params: {...key},query }})
+				return getters['getSuperadmin']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QuerySuperadmin API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QuerySuperadminAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.querySuperadminAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.querySuperadminAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'SuperadminAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QuerySuperadminAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getSuperadminAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QuerySuperadminAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
 		async sendMsgRequestTransaction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -403,21 +467,6 @@ export default {
 					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgRequestTransaction:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgSetAdmin({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgSetAdmin(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetAdmin:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgSetAdmin:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -436,6 +485,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgSetAdmin({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSetAdmin(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetAdmin:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetAdmin:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgAddWhitelisted({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -448,6 +512,21 @@ export default {
 					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgAddWhitelisted:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgTransferPoolcoin({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgTransferPoolcoin(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgTransferPoolcoin:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgTransferPoolcoin:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -481,21 +560,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgTransferPoolcoin({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgTransferPoolcoin(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgTransferPoolcoin:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgTransferPoolcoin:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		
 		async MsgRequestTransaction({ rootGetters }, { value }) {
 			try {
@@ -507,19 +571,6 @@ export default {
 					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgRequestTransaction:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgSetAdmin({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgSetAdmin(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetAdmin:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgSetAdmin:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -536,6 +587,19 @@ export default {
 				}
 			}
 		},
+		async MsgSetAdmin({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgSetAdmin(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetAdmin:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetAdmin:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		async MsgAddWhitelisted({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -546,6 +610,19 @@ export default {
 					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgAddWhitelisted:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgTransferPoolcoin({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgTransferPoolcoin(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgTransferPoolcoin:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgTransferPoolcoin:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -572,19 +649,6 @@ export default {
 					throw new Error('TxClient:MsgObservationVote:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgObservationVote:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgTransferPoolcoin({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgTransferPoolcoin(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgTransferPoolcoin:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgTransferPoolcoin:Create Could not create message: ' + e.message)
 				}
 			}
 		},

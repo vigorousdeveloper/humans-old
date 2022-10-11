@@ -122,6 +122,21 @@ export interface HumansQueryAllPoolBalanceResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface HumansQueryAllSuperadminResponse {
+  superadmin?: HumansSuperadmin[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface HumansQueryGetFeeBalanceResponse {
   feeBalance?: HumansFeeBalance;
 }
@@ -138,12 +153,21 @@ export interface HumansQueryGetPoolBalanceResponse {
   poolBalance?: HumansPoolBalance;
 }
 
+export interface HumansQueryGetSuperadminResponse {
+  superadmin?: HumansSuperadmin;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
 export interface HumansQueryParamsResponse {
   /** params holds all the parameters of this module. */
   params?: HumansParams;
+}
+
+export interface HumansSuperadmin {
+  index?: string;
+  address?: string;
 }
 
 export interface ProtobufAny {
@@ -584,6 +608,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryPoolBalance = (index: string, params: RequestParams = {}) =>
     this.request<HumansQueryGetPoolBalanceResponse, RpcStatus>({
       path: `/humansdotai/humans/humans/pool_balance/${index}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QuerySuperadminAll
+   * @summary Queries a list of Superadmin items.
+   * @request GET:/humansdotai/humans/humans/superadmin
+   */
+  querySuperadminAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<HumansQueryAllSuperadminResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/superadmin`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QuerySuperadmin
+   * @summary Queries a Superadmin by index.
+   * @request GET:/humansdotai/humans/humans/superadmin/{index}
+   */
+  querySuperadmin = (index: string, params: RequestParams = {}) =>
+    this.request<HumansQueryGetSuperadminResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/superadmin/${index}`,
       method: "GET",
       format: "json",
       ...params,
