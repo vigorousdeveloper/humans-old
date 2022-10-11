@@ -5,12 +5,13 @@ import { KeysignVoteData } from "./module/types/humans/keysign_vote_data"
 import { ObserveVote } from "./module/types/humans/observe_vote"
 import { Params } from "./module/types/humans/params"
 import { PoolBalance } from "./module/types/humans/pool_balance"
+import { Pubkeys } from "./module/types/humans/pubkeys"
 import { Superadmin } from "./module/types/humans/superadmin"
 import { TransactionData } from "./module/types/humans/transaction_data"
 import { WhitelistedNode } from "./module/types/humans/whitelisted_node"
 
 
-export { FeeBalance, KeysignVoteData, ObserveVote, Params, PoolBalance, Superadmin, TransactionData, WhitelistedNode };
+export { FeeBalance, KeysignVoteData, ObserveVote, Params, PoolBalance, Pubkeys, Superadmin, TransactionData, WhitelistedNode };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -63,6 +64,8 @@ const getDefaultState = () => {
 				TransactionDataAll: {},
 				WhitelistedNode: {},
 				WhitelistedNodeAll: {},
+				Pubkeys: {},
+				PubkeysAll: {},
 				
 				_Structure: {
 						FeeBalance: getStructure(FeeBalance.fromPartial({})),
@@ -70,6 +73,7 @@ const getDefaultState = () => {
 						ObserveVote: getStructure(ObserveVote.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						PoolBalance: getStructure(PoolBalance.fromPartial({})),
+						Pubkeys: getStructure(Pubkeys.fromPartial({})),
 						Superadmin: getStructure(Superadmin.fromPartial({})),
 						TransactionData: getStructure(TransactionData.fromPartial({})),
 						WhitelistedNode: getStructure(WhitelistedNode.fromPartial({})),
@@ -190,6 +194,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.WhitelistedNodeAll[JSON.stringify(params)] ?? {}
+		},
+				getPubkeys: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Pubkeys[JSON.stringify(params)] ?? {}
+		},
+				getPubkeysAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PubkeysAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -583,6 +599,54 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryPubkeys({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPubkeys( key.index)).data
+				
+					
+				commit('QUERY', { query: 'Pubkeys', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPubkeys', payload: { options: { all }, params: {...key},query }})
+				return getters['getPubkeys']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPubkeys API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPubkeysAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPubkeysAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryPubkeysAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'PubkeysAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPubkeysAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getPubkeysAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPubkeysAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
 		async sendMsgSetAdmin({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -598,18 +662,33 @@ export default {
 				}
 			}
 		},
-		async sendMsgAddWhitelisted({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRequestTransaction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgAddWhitelisted(value)
+				const msg = await txClient.msgRequestTransaction(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAddWhitelisted:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRequestTransaction:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgApproveTransaction({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgApproveTransaction(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveTransaction:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgApproveTransaction:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -643,33 +722,18 @@ export default {
 				}
 			}
 		},
-		async sendMsgApproveTransaction({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgAddWhitelisted({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveTransaction(value)
+				const msg = await txClient.msgAddWhitelisted(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveTransaction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgApproveTransaction:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateBalance({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdateBalance(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateBalance:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateBalance:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgAddWhitelisted:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -688,18 +752,18 @@ export default {
 				}
 			}
 		},
-		async sendMsgRequestTransaction({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateBalance({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRequestTransaction(value)
+				const msg = await txClient.msgUpdateBalance(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateBalance:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgRequestTransaction:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateBalance:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -717,16 +781,29 @@ export default {
 				}
 			}
 		},
-		async MsgAddWhitelisted({ rootGetters }, { value }) {
+		async MsgRequestTransaction({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgAddWhitelisted(value)
+				const msg = await txClient.msgRequestTransaction(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgAddWhitelisted:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRequestTransaction:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgApproveTransaction({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgApproveTransaction(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveTransaction:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgApproveTransaction:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -756,29 +833,16 @@ export default {
 				}
 			}
 		},
-		async MsgApproveTransaction({ rootGetters }, { value }) {
+		async MsgAddWhitelisted({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveTransaction(value)
+				const msg = await txClient.msgAddWhitelisted(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveTransaction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddWhitelisted:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgApproveTransaction:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateBalance({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdateBalance(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateBalance:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateBalance:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgAddWhitelisted:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -795,16 +859,16 @@ export default {
 				}
 			}
 		},
-		async MsgRequestTransaction({ rootGetters }, { value }) {
+		async MsgUpdateBalance({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRequestTransaction(value)
+				const msg = await txClient.msgUpdateBalance(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRequestTransaction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateBalance:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgRequestTransaction:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateBalance:Create Could not create message: ' + e.message)
 				}
 			}
 		},

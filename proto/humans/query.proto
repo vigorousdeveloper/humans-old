@@ -12,6 +12,7 @@ import "humans/pool_balance.proto";
 import "humans/superadmin.proto";
 import "humans/transaction_data.proto";
 import "humans/whitelisted_node.proto";
+import "humans/pubkeys.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/humansdotai/humans/x/humans/types";
@@ -90,6 +91,16 @@ service Query {
 	// Queries a list of WhitelistedNode items.
 	rpc WhitelistedNodeAll(QueryAllWhitelistedNodeRequest) returns (QueryAllWhitelistedNodeResponse) {
 		option (google.api.http).get = "/humansdotai/humans/humans/whitelisted_node";
+	}
+
+// Queries a Pubkeys by index.
+	rpc Pubkeys(QueryGetPubkeysRequest) returns (QueryGetPubkeysResponse) {
+		option (google.api.http).get = "/humansdotai/humans/humans/pubkeys/{index}";
+	}
+
+	// Queries a list of Pubkeys items.
+	rpc PubkeysAll(QueryAllPubkeysRequest) returns (QueryAllPubkeysResponse) {
+		option (google.api.http).get = "/humansdotai/humans/humans/pubkeys";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -227,6 +238,24 @@ message QueryAllWhitelistedNodeRequest {
 
 message QueryAllWhitelistedNodeResponse {
 	repeated WhitelistedNode whitelistedNode = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPubkeysRequest {
+	  string index = 1;
+
+}
+
+message QueryGetPubkeysResponse {
+	Pubkeys pubkeys = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPubkeysRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPubkeysResponse {
+	repeated Pubkeys pubkeys = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

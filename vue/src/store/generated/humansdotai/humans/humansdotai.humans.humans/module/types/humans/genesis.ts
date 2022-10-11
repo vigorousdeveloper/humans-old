@@ -7,6 +7,7 @@ import { PoolBalance } from "../humans/pool_balance";
 import { Superadmin } from "../humans/superadmin";
 import { TransactionData } from "../humans/transaction_data";
 import { WhitelistedNode } from "../humans/whitelisted_node";
+import { Pubkeys } from "../humans/pubkeys";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "humansdotai.humans.humans";
@@ -20,8 +21,9 @@ export interface GenesisState {
   poolBalanceList: PoolBalance[];
   superadminList: Superadmin[];
   transactionDataList: TransactionData[];
-  /** this line is used by starport scaffolding # genesis/proto/state */
   whitelistedNodeList: WhitelistedNode[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  pubkeysList: Pubkeys[];
 }
 
 const baseGenesisState: object = {};
@@ -52,6 +54,9 @@ export const GenesisState = {
     for (const v of message.whitelistedNodeList) {
       WhitelistedNode.encode(v!, writer.uint32(66).fork()).ldelim();
     }
+    for (const v of message.pubkeysList) {
+      Pubkeys.encode(v!, writer.uint32(74).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -66,6 +71,7 @@ export const GenesisState = {
     message.superadminList = [];
     message.transactionDataList = [];
     message.whitelistedNodeList = [];
+    message.pubkeysList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -107,6 +113,9 @@ export const GenesisState = {
             WhitelistedNode.decode(reader, reader.uint32())
           );
           break;
+        case 9:
+          message.pubkeysList.push(Pubkeys.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -124,6 +133,7 @@ export const GenesisState = {
     message.superadminList = [];
     message.transactionDataList = [];
     message.whitelistedNodeList = [];
+    message.pubkeysList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromJSON(object.params);
     } else {
@@ -177,6 +187,11 @@ export const GenesisState = {
     ) {
       for (const e of object.whitelistedNodeList) {
         message.whitelistedNodeList.push(WhitelistedNode.fromJSON(e));
+      }
+    }
+    if (object.pubkeysList !== undefined && object.pubkeysList !== null) {
+      for (const e of object.pubkeysList) {
+        message.pubkeysList.push(Pubkeys.fromJSON(e));
       }
     }
     return message;
@@ -235,6 +250,13 @@ export const GenesisState = {
     } else {
       obj.whitelistedNodeList = [];
     }
+    if (message.pubkeysList) {
+      obj.pubkeysList = message.pubkeysList.map((e) =>
+        e ? Pubkeys.toJSON(e) : undefined
+      );
+    } else {
+      obj.pubkeysList = [];
+    }
     return obj;
   },
 
@@ -247,6 +269,7 @@ export const GenesisState = {
     message.superadminList = [];
     message.transactionDataList = [];
     message.whitelistedNodeList = [];
+    message.pubkeysList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     } else {
@@ -300,6 +323,11 @@ export const GenesisState = {
     ) {
       for (const e of object.whitelistedNodeList) {
         message.whitelistedNodeList.push(WhitelistedNode.fromPartial(e));
+      }
+    }
+    if (object.pubkeysList !== undefined && object.pubkeysList !== null) {
+      for (const e of object.pubkeysList) {
+        message.pubkeysList.push(Pubkeys.fromPartial(e));
       }
     }
     return message;
