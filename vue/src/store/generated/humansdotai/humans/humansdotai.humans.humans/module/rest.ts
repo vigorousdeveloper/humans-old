@@ -55,6 +55,13 @@ export interface HumansObserveVote {
  */
 export type HumansParams = object;
 
+export interface HumansPoolBalance {
+  index?: string;
+  chainName?: string;
+  balance?: string;
+  decimal?: string;
+}
+
 export interface HumansQueryAllFeeBalanceResponse {
   feeBalance?: HumansFeeBalance[];
 
@@ -100,6 +107,21 @@ export interface HumansQueryAllObserveVoteResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface HumansQueryAllPoolBalanceResponse {
+  poolBalance?: HumansPoolBalance[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface HumansQueryGetFeeBalanceResponse {
   feeBalance?: HumansFeeBalance;
 }
@@ -110,6 +132,10 @@ export interface HumansQueryGetKeysignVoteDataResponse {
 
 export interface HumansQueryGetObserveVoteResponse {
   observeVote?: HumansObserveVote;
+}
+
+export interface HumansQueryGetPoolBalanceResponse {
+  poolBalance?: HumansPoolBalance;
 }
 
 /**
@@ -168,13 +194,6 @@ export interface V1Beta1PageRequest {
    * is set.
    */
   count_total?: boolean;
-
-  /**
-   * reverse is set to true if results are to be returned in the descending order.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  reverse?: boolean;
 }
 
 /**
@@ -404,7 +423,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -446,7 +464,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -488,7 +505,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -527,6 +543,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryParams = (params: RequestParams = {}) =>
     this.request<HumansQueryParamsResponse, RpcStatus>({
       path: `/humansdotai/humans/humans/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPoolBalanceAll
+   * @summary Queries a list of PoolBalance items.
+   * @request GET:/humansdotai/humans/humans/pool_balance
+   */
+  queryPoolBalanceAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<HumansQueryAllPoolBalanceResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/pool_balance`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPoolBalance
+   * @summary Queries a PoolBalance by index.
+   * @request GET:/humansdotai/humans/humans/pool_balance/{index}
+   */
+  queryPoolBalance = (index: string, params: RequestParams = {}) =>
+    this.request<HumansQueryGetPoolBalanceResponse, RpcStatus>({
+      path: `/humansdotai/humans/humans/pool_balance/${index}`,
       method: "GET",
       format: "json",
       ...params,
