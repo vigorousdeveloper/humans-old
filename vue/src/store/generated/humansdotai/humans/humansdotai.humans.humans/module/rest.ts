@@ -34,6 +34,8 @@ export interface HumansMsgApproveTransactionResponse {
   msg?: string;
 }
 
+export type HumansMsgKeysignVoteResponse = object;
+
 export interface HumansMsgObservationVoteResponse {
   code?: string;
   msg?: string;

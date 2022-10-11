@@ -14,6 +14,7 @@ service Msg {
   rpc TransferPoolcoin(MsgTransferPoolcoin) returns (MsgTransferPoolcoinResponse);
   rpc AddWhitelisted(MsgAddWhitelisted) returns (MsgAddWhitelistedResponse);
   rpc SetAdmin(MsgSetAdmin) returns (MsgSetAdminResponse);
+  rpc KeysignVote(MsgKeysignVote) returns (MsgKeysignVoteResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -99,6 +100,15 @@ message MsgSetAdmin {
 message MsgSetAdminResponse {
   string code = 1;
   string msg = 2;
+}
+
+message MsgKeysignVote {
+  string creator = 1;
+  string txHash = 2;
+  string pubKey = 3;
+}
+
+message MsgKeysignVoteResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
