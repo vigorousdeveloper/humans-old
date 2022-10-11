@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type HumansMsgAddWhitelistedResponse = object;
+
 export type HumansMsgApproveTransactionResponse = object;
 
 export type HumansMsgObservationVoteResponse = object;

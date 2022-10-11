@@ -53,6 +53,13 @@ export interface MsgTransferPoolcoin {
 
 export interface MsgTransferPoolcoinResponse {}
 
+export interface MsgAddWhitelisted {
+  creator: string;
+  address: string;
+}
+
+export interface MsgAddWhitelistedResponse {}
+
 const baseMsgRequestTransaction: object = {
   creator: "",
   originChain: "",
@@ -978,6 +985,130 @@ export const MsgTransferPoolcoinResponse = {
   },
 };
 
+const baseMsgAddWhitelisted: object = { creator: "", address: "" };
+
+export const MsgAddWhitelisted = {
+  encode(message: MsgAddWhitelisted, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAddWhitelisted {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgAddWhitelisted } as MsgAddWhitelisted;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddWhitelisted {
+    const message = { ...baseMsgAddWhitelisted } as MsgAddWhitelisted;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgAddWhitelisted): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgAddWhitelisted>): MsgAddWhitelisted {
+    const message = { ...baseMsgAddWhitelisted } as MsgAddWhitelisted;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgAddWhitelistedResponse: object = {};
+
+export const MsgAddWhitelistedResponse = {
+  encode(
+    _: MsgAddWhitelistedResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgAddWhitelistedResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgAddWhitelistedResponse,
+    } as MsgAddWhitelistedResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAddWhitelistedResponse {
+    const message = {
+      ...baseMsgAddWhitelistedResponse,
+    } as MsgAddWhitelistedResponse;
+    return message;
+  },
+
+  toJSON(_: MsgAddWhitelistedResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgAddWhitelistedResponse>
+  ): MsgAddWhitelistedResponse {
+    const message = {
+      ...baseMsgAddWhitelistedResponse,
+    } as MsgAddWhitelistedResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   RequestTransaction(
@@ -990,10 +1121,13 @@ export interface Msg {
   ApproveTransaction(
     request: MsgApproveTransaction
   ): Promise<MsgApproveTransactionResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   TransferPoolcoin(
     request: MsgTransferPoolcoin
   ): Promise<MsgTransferPoolcoinResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AddWhitelisted(
+    request: MsgAddWhitelisted
+  ): Promise<MsgAddWhitelistedResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -1066,6 +1200,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgTransferPoolcoinResponse.decode(new Reader(data))
+    );
+  }
+
+  AddWhitelisted(
+    request: MsgAddWhitelisted
+  ): Promise<MsgAddWhitelistedResponse> {
+    const data = MsgAddWhitelisted.encode(request).finish();
+    const promise = this.rpc.request(
+      "humansdotai.humans.humans.Msg",
+      "AddWhitelisted",
+      data
+    );
+    return promise.then((data) =>
+      MsgAddWhitelistedResponse.decode(new Reader(data))
     );
   }
 }

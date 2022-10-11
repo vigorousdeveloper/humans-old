@@ -12,6 +12,7 @@ service Msg {
   rpc UpdateBalance(MsgUpdateBalance) returns (MsgUpdateBalanceResponse);
   rpc ApproveTransaction(MsgApproveTransaction) returns (MsgApproveTransactionResponse);
   rpc TransferPoolcoin(MsgTransferPoolcoin) returns (MsgTransferPoolcoinResponse);
+  rpc AddWhitelisted(MsgAddWhitelisted) returns (MsgAddWhitelistedResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -68,6 +69,14 @@ message MsgTransferPoolcoin {
 }
 
 message MsgTransferPoolcoinResponse {
+}
+
+message MsgAddWhitelisted {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgAddWhitelistedResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
